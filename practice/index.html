@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz App</title>
+    <style>
+        /* General Styling */
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to bottom right, #fbd3e9, #bbf0f3);
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        /* Quiz Container */
+        .quiz-container {
+            background: #fff;
+            max-width: 600px;
+            width: 90%;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2em;
+            color: #4a4e69;
+            margin-bottom: 10px;
+        }
+
+        /* Timer Styling */
+        #timer {
+            font-size: 1.4em;
+            color: #ff6b6b;
+            font-weight: bold;
+            margin: 15px 0;
+            animation: pulse 1.5s infinite alternate;
+        }
+
+        /* Question Styling */
+        #question {
+            font-size: 1.2em;
+            margin: 20px 0;
+            color: #6c757d;
+        }
+
+        /* Options Styling */
+        .options button {
+            background: linear-gradient(135deg, #a1c4fd, #c2e9fb);
+            color: #333;
+            border: none;
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 1em;
+            font-weight: 600;
+            border-radius: 8px;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .options button:hover {
+            background: linear-gradient(135deg, #fbc2eb, #a6c1ee);
+            color: white;
+            transform: scale(1.05);
+        }
+
+        /* End Message */
+        #end-message {
+            font-size: 1.5em;
+            color: #6a4c93;
+            margin-top: 20px;
+        }
+
+        /* Animation for Timer */
+        @keyframes pulse {
+            0% { transform: scale(1); color: #ff6b6b; }
+            100% { transform: scale(1.1); color: #fa5252; }
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h1>Aesthetic Quiz App</h1>
+        <div id="timer">Time Left: 10s</div>
+        <div id="question">Loading question...</div>
+        <div class="options" id="options"></div>
+        <div id="end-message"></div>
+    </div>
+
+    <script>
+        const questions = [
+            { 
+                question: "HTML ka full form kya hai?", 
+                options: ["Hyper Text Markup Language", "High Text Machine Language", "Hyperlink Text Mark Language", "Hyper Tag Machine Language"], 
+                correct: 0 
+            },
+            { 
+                question: "CSS ka use kis ke liye hota hai?", 
+                options: ["Content Writing", "Style Designing", "Database Management", "Coding Logic"], 
+                correct: 1 
+            },
+            { 
+                question: "JavaScript kis ke liye use hota hai?", 
+                options: ["Structure", "Styling", "Functionality", "Database"], 
+                correct: 2 
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let timer;
+        let timeLeft = 10;
+
+        const questionElement = document.getElementById("question");
+        const optionsElement = document.getElementById("options");
+        const timerElement = document.getElementById("timer");
+        const endMessage = document.getElementById("end-message");
+
+        function loadQuestion() {
+            clearInterval(timer); 
+            timeLeft = 10;
+            timerElement.textContent = `Time Left: ${timeLeft}s`;
+            endMessage.textContent = ""; 
+
+            if (currentQuestionIndex < questions.length) {
+                const currentQuestion = questions[currentQuestionIndex];
+                questionElement.textContent = currentQuestion.question;
+                optionsElement.innerHTML = "";
+
+                currentQuestion.options.forEach((option, index) => {
+                    const button = document.createElement("button");
+                    button.textContent = option;
+                    button.onclick = () => handleAnswer(index);
+                    optionsElement.appendChild(button);
+                });
+
+                startTimer();
+            } else {
+                endQuiz();
+            }
+        }
+
+        function startTimer() {
+            timer = setInterval(() => {
+                timeLeft--;
+                timerElement.textContent = `Time Left: ${timeLeft}s`;
+
+                if (timeLeft === 0) {
+                    clearInterval(timer);
+                    nextQuestion();
+                }
+            }, 1000);
+        }
+
+        function handleAnswer(selectedIndex) {
+            clearInterval(timer);
+            const currentQuestion = questions[currentQuestionIndex];
+            if (selectedIndex === currentQuestion.correct) {
+                alert("🎉 Sahi jawab!");
+            } else {
+                alert("😢 Galat jawab.");
+            }
+            nextQuestion();
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            loadQuestion();
+        }
+
+        function endQuiz() {
+            questionElement.textContent = "";
+            optionsElement.innerHTML = "";
+            timerElement.textContent = "";
+            endMessage.textContent = "✨ Quiz Khatam! Shukriya khelne ke liye! ✨";
+        }
+
+        loadQuestion();
+    </script>
+</body>
+</html>
